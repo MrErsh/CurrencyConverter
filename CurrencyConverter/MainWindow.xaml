@@ -1,0 +1,168 @@
+﻿<Window x:Class="CurrencyConverter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:vm="clr-namespace:CurrencyConverter.ViewModels"
+        Title="Котировки"
+        Width="630"
+        Height="450"
+        d:DataContext="{d:DesignInstance vm:MainViewModel}"
+        mc:Ignorable="d">
+    <Grid Margin="15,15,15,30">
+        <Grid.Resources>
+            <Style TargetType="{x:Type Button}">
+                <Style.Setters>
+                    <Setter Property="Padding" Value="5,2" />
+                    <Setter Property="Margin" Value="5,0,0,0" />
+                </Style.Setters>
+            </Style>
+
+            <Style x:Key="HeaderTextBlockStyle" TargetType="{x:Type TextBlock}">
+                <Style.Setters>
+                    <Setter Property="FontSize" Value="20" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                    <Setter Property="Margin" Value="0,12" />
+                </Style.Setters>
+            </Style>
+
+            <Style x:Key="CurrencyComboBoxStyle" TargetType="{x:Type ComboBox}">
+                <Style.Setters>
+                    <Setter Property="DisplayMemberPath" Value="Code" />
+                    <Setter Property="SelectedValuePath" Value="Code" />
+                </Style.Setters>
+            </Style>
+
+            <Style x:Key="DecimalUpDownStyle" TargetType="{x:Type xctk:DecimalUpDown}">
+                <Style.Setters>
+                    <Setter Property="FormatString" Value="F4" />
+                    <Setter Property="ShowButtonSpinner" Value="False" />
+                </Style.Setters>
+            </Style>
+        </Grid.Resources>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--#region Left part-->
+
+            <Grid MinWidth="250" VerticalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBox x:Name="FilterStringTextBox"
+                         Grid.Row="0"
+                         Grid.Column="0" />
+
+                <Button Grid.Row="0"
+                        Grid.Column="1"
+                        Content="Поиск"
+                        Command="{Binding FilterCommand}"
+                        CommandParameter="{Binding ElementName=FilterStringTextBox, Path=Text, Mode=OneWay}" />
+
+                <TextBlock Grid.Row="1"
+                           Grid.ColumnSpan="2"
+                           Style="{StaticResource HeaderTextBlockStyle}"
+                           Text="Коды валют" />
+
+                <ListView Grid.Row="2"
+                          Grid.ColumnSpan="2"
+                          SelectedItem="{Binding SelectedCurrency, Mode=TwoWay}"
+                          ItemsSource="{Binding Currencies, Mode=OneWay}" />
+            </Grid>
+
+            <!--#region Right part-->
+
+            <Grid Grid.Column="1" Margin="20,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <DatePicker x:Name="DatePicker"
+                                SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+                                SelectedDateFormat="Long" />
+
+                    <Button Grid.Column="1"
+                            Content="Загрузить"
+                            Command="{Binding LoadInfoOnDateCommand}"
+                            CommandParameter="{Binding ElementName=DatePicker, Path=SelectedDate}" />
+
+                    <TextBlock Grid.Row="1"
+                               Grid.ColumnSpan="2"
+                               Style="{StaticResource HeaderTextBlockStyle}"
+                               Text="Курсы валют ЦБ на дату" />
+
+                    <TextBox Grid.Row="2"
+                             Grid.ColumnSpan="2"
+                             Text="{Binding CurrencyInfoText, Mode=OneWay}"
+                             IsReadOnly="True" />
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="80" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.ColumnSpan="2" Style="{StaticResource HeaderTextBlockStyle}" Text="Конвертация"/>
+
+                    <ComboBox Grid.Row="1"
+                              Style="{StaticResource CurrencyComboBoxStyle}"
+                              ItemsSource="{Binding AllCurrencies}"
+                              SelectedValue="{Binding CurrencyFromCode, Mode=TwoWay}" />
+
+                    <xctk:DecimalUpDown Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="5,0,0,0"
+                                        Style="{StaticResource DecimalUpDownStyle}"
+                                        Value="{Binding ValueFrom, Mode=TwoWay}" />
+
+                    <ComboBox Grid.Row="2"
+                              Margin="0,20,0,0"
+                              Style="{StaticResource CurrencyComboBoxStyle}"
+                              ItemsSource="{Binding AllCurrencies}"
+                              SelectedValue="{Binding CurrencyToCode, Mode=TwoWay}" />
+
+                    <xctk:DecimalUpDown Grid.Row="2"
+                                        Grid.Column="2"
+                                        Margin="5,20,0,0"
+                                        Style="{StaticResource DecimalUpDownStyle}"
+                                        Value="{Binding ValueTo, Mode=TwoWay}" />
+                </Grid>
+            </Grid>
+
+            <!--#endregion-->
+        </Grid>
+    </Grid>
+</Window>

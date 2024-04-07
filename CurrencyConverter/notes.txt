@@ -1,0 +1,4 @@
+Используемые библиотеки:
+ - CommunityToolkit.Mvvm https://github.com/CommunityToolkit/MVVM-Samples
+ - Extended WPF Toolkit https://github.com/xceedsoftware/wpftoolkit
+ - Refit https://github.com/reactiveui/refit
